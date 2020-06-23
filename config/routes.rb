@@ -1,3 +1,12 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  resources :user do
+    resources :board
+  end
+  resources :board
+  resources :list
+  resources :card
+  resources :checklist
+  resources :check_item
+  resources :label
+
 end
