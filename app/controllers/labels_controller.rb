@@ -1,21 +1,10 @@
 class LabelsController < ApplicationController
+  before_action :authorize_user
   before_action :set_label, only: [:show, :update, :destroy]
 
-  # GET /labels
-  def index
-    @labels = Label.all
-
-    render json: @labels
-  end
-
-  # GET /labels/1
-  def show
-    render json: @label
-  end
-
-  # POST /labels
   def create
-    @label = Label.new(label_params)
+    @board = Board.find(params[:board_id])
+    @label = @board.labels.new(label_params)
 
     if @label.save
       render json: @label, status: :created
@@ -24,7 +13,6 @@ class LabelsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /labels/1
   def update
     if @label.update(label_params)
       render json: @label
@@ -33,19 +21,24 @@ class LabelsController < ApplicationController
     end
   end
 
-  # DELETE /labels/1
   def destroy
     @label.destroy
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_label
       @label = Label.find(params[:id])
     end
 
-    # Only allow a trusted parameter "white list" through.
     def label_params
-      params.require(:label).permit(:name, :color, :board_id, :card_id)
+      params.require(:label).permit(:name, :color)
+    end
+
+    def authorize_user
+      board = Board.find(params[:board_id])
+      unless (current_user == board.user)
+        errors = { errors: { message: 'Access denied' } }
+        render json: errors, status: :unauthorized
+      end
     end
 end

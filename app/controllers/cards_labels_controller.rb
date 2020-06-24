@@ -1,5 +1,5 @@
 class CardsLabelsController < ApplicationController
-
+  before_action :authorize_user
   before_action :set_card_label, only: [:create, :destroy]
 
   def create
@@ -19,5 +19,14 @@ class CardsLabelsController < ApplicationController
   def set_card_label
     @card = Card.find(params[:card_id])
     @label = Label.find(params[:label_id])
+  end
+
+  def authorize_user
+    card = Card.find(params[:card_id])
+    card_owner = card.list.board.user
+    unless (current_user == card_owner)
+      errors = { errors: { message: 'Access denied' } }
+      render json: errors, status: :unauthorized
+    end
   end
 end

@@ -10,28 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_24_010215) do
+ActiveRecord::Schema.define(version: 2020_06_24_040927) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "boards", force: :cascade do |t|
     t.string "name"
-    t.boolean "closed"
-    t.text "desc"
-    t.string "color"
+    t.boolean "closed", default: false
+    t.string "color", default: "blue"
     t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.boolean "starred"
+    t.boolean "starred", default: false
     t.index ["user_id"], name: "index_boards_on_user_id"
   end
 
   create_table "cards", force: :cascade do |t|
     t.string "name"
     t.text "desc"
-    t.integer "pos"
-    t.boolean "closed"
+    t.integer "pos", default: 1
+    t.boolean "closed", default: false
     t.bigint "list_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -45,8 +44,8 @@ ActiveRecord::Schema.define(version: 2020_06_24_010215) do
 
   create_table "check_items", force: :cascade do |t|
     t.string "name"
-    t.integer "pos"
-    t.boolean "completed"
+    t.integer "pos", default: 1
+    t.boolean "completed", default: false
     t.bigint "checklist_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -55,7 +54,7 @@ ActiveRecord::Schema.define(version: 2020_06_24_010215) do
 
   create_table "checklists", force: :cascade do |t|
     t.string "name"
-    t.integer "pos"
+    t.integer "pos", default: 1
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "card_id", null: false
@@ -64,7 +63,7 @@ ActiveRecord::Schema.define(version: 2020_06_24_010215) do
 
   create_table "labels", force: :cascade do |t|
     t.string "name"
-    t.string "color"
+    t.string "color", default: "blue"
     t.bigint "board_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -73,30 +72,5 @@ ActiveRecord::Schema.define(version: 2020_06_24_010215) do
 
   create_table "lists", force: :cascade do |t|
     t.string "name"
-    t.integer "pos"
-    t.boolean "closed"
-    t.bigint "board_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["board_id"], name: "index_lists_on_board_id"
-  end
-
-  create_table "users", force: :cascade do |t|
-    t.string "username"
-    t.string "email"
-    t.string "first_name"
-    t.string "last_name"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.string "password_digest"
-    t.string "token"
-    t.index ["token"], name: "index_users_on_token"
-  end
-
-  add_foreign_key "boards", "users"
-  add_foreign_key "cards", "lists"
-  add_foreign_key "check_items", "checklists"
-  add_foreign_key "checklists", "cards"
-  add_foreign_key "labels", "boards"
-  add_foreign_key "lists", "boards"
-end
+    t.integer "pos", default: 1
+    t.boolean "closed", default: false

@@ -1,52 +1,53 @@
 class BoardsController < ApplicationController
+  before_action :authorize_user, except: [:index]
   before_action :set_board, only: [:show, :update, :destroy]
   COLORS = ["green", "yellow", "orange", "red", "purple", "blue"]
 
-  # GET /boards
   def index
-    @boards = Board.all
-
-    render json: @boards
+    @boards = current_user.boards
+    render json: @boards, each_serializer: AllBoardsSerializer
   end
 
-  # GET /boards/1
   def show
-    render json: @board
+    render json: @board, serializer: SingleBoardSerializer
   end
 
-  # POST /boards
   def create
-    @board = Board.new(board_params)
+    @board = current_user.boards.new(board_params)
     if @board.save
       COLORS.each {|color| @board.labels.create(name:"", color: color) }
-      render json: @board, status: :created
+      render json: @board, status: :created, serializer: SingleBoardSerializer
     else
       render json: @board.errors, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /boards/1
   def update
     if @board.update(board_params)
-      render json: @board
+      render json: @board, serializer: SingleBoardSerializer
     else
       render json: @board.errors, status: :unprocessable_entity
     end
   end
 
-  # DELETE /boards/1
   def destroy
     @board.destroy
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_board
       @board = Board.find(params[:id])
     end
 
-    # Only allow a trusted parameter "white list" through.
     def board_params
-      params.require(:board).permit(:name, :closed, :desc, :color, :user_id)
+      params.require(:board).permit(:name, :closed, :desc, :color, :starred)
+    end
+
+    def authorize_user
+      board = Board.find(params[:id])
+      unless (current_user == board.user)
+        errors = { errors: { message: 'Access denied' } }
+        render json: errors, status: :unauthorized
+      end
     end
 end

@@ -1,21 +1,14 @@
 class CardsController < ApplicationController
+  before_action :authorize_user
   before_action :set_card, only: [:show, :update, :destroy]
 
-  # GET /cards
-  def index
-    @cards = Card.all
-
-    render json: @cards
-  end
-
-  # GET /cards/1
   def show
     render json: @card
   end
 
-  # POST /cards
   def create
-    @card = Card.new(card_params)
+    @list = List.find(params[:list_id])
+    @card = @list.cards.new(card_params)
 
     if @card.save
       render json: @card, status: :created
@@ -24,7 +17,6 @@ class CardsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /cards/1
   def update
     if @card.update(card_params)
       render json: @card
@@ -33,19 +25,25 @@ class CardsController < ApplicationController
     end
   end
 
-  # DELETE /cards/1
   def destroy
     @card.destroy
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_card
       @card = Card.find(params[:id])
     end
 
-    # Only allow a trusted parameter "white list" through.
     def card_params
-      params.require(:card).permit(:name, :desc, :pos, :closed, :list_id)
+      params.require(:card).permit(:name, :desc, :pos, :closed)
+    end
+
+    def authorize_user
+      list = List.find(params[:list_id])
+      list_owner = list.board.user
+      unless (current_user == card_owner)
+        errors = { errors: { message: 'Access denied' } }
+        render json: errors, status: :unauthorized
+      end
     end
 end

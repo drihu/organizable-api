@@ -1,21 +1,10 @@
 class CheckItemsController < ApplicationController
+  before_action :authorize_user
   before_action :set_check_item, only: [:show, :update, :destroy]
 
-  # GET /check_items
-  def index
-    @check_items = CheckItem.all
-
-    render json: @check_items
-  end
-
-  # GET /check_items/1
-  def show
-    render json: @check_item
-  end
-
-  # POST /check_items
   def create
-    @check_item = CheckItem.new(check_item_params)
+    @checklist = Checklist.find(params[:checklist_id])
+    @check_item = @checklist.check_items.new(check_item_params)
 
     if @check_item.save
       render json: @check_item, status: :created
@@ -24,7 +13,6 @@ class CheckItemsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /check_items/1
   def update
     if @check_item.update(check_item_params)
       render json: @check_item
@@ -33,19 +21,25 @@ class CheckItemsController < ApplicationController
     end
   end
 
-  # DELETE /check_items/1
   def destroy
     @check_item.destroy
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_check_item
       @check_item = CheckItem.find(params[:id])
     end
 
-    # Only allow a trusted parameter "white list" through.
     def check_item_params
-      params.require(:check_item).permit(:name, :pos, :completed, :checklist_id)
+      params.require(:check_item).permit(:name, :pos, :completed)
+    end
+
+    def authorize_user
+      checklist = Checklist.find(params[:checklist_id])
+      checklist_owner = checklist.card.list.board.user
+      unless (current_user == checklist_owner)
+        errors = { errors: { message: 'Access denied' } }
+        render json: errors, status: :unauthorized
+      end
     end
 end
