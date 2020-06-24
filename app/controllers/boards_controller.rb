@@ -14,8 +14,6 @@ class BoardsController < ApplicationController
     render json: @board
   end
 
-  colors = {}
-
   # POST /boards
   def create
     @board = Board.new(board_params)
