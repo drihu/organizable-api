@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_23_210814) do
+ActiveRecord::Schema.define(version: 2020_06_24_010215) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 2020_06_23_210814) do
     t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "starred"
     t.index ["user_id"], name: "index_boards_on_user_id"
   end
 
@@ -35,6 +36,11 @@ ActiveRecord::Schema.define(version: 2020_06_23_210814) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["list_id"], name: "index_cards_on_list_id"
+  end
+
+  create_table "cards_labels", id: false, force: :cascade do |t|
+    t.bigint "card_id", null: false
+    t.bigint "label_id", null: false
   end
 
   create_table "check_items", force: :cascade do |t|
@@ -60,11 +66,9 @@ ActiveRecord::Schema.define(version: 2020_06_23_210814) do
     t.string "name"
     t.string "color"
     t.bigint "board_id", null: false
-    t.bigint "card_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["board_id"], name: "index_labels_on_board_id"
-    t.index ["card_id"], name: "index_labels_on_card_id"
   end
 
   create_table "lists", force: :cascade do |t|
@@ -85,6 +89,8 @@ ActiveRecord::Schema.define(version: 2020_06_23_210814) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "password_digest"
+    t.string "token"
+    t.index ["token"], name: "index_users_on_token"
   end
 
   add_foreign_key "boards", "users"
@@ -92,6 +98,5 @@ ActiveRecord::Schema.define(version: 2020_06_23_210814) do
   add_foreign_key "check_items", "checklists"
   add_foreign_key "checklists", "cards"
   add_foreign_key "labels", "boards"
-  add_foreign_key "labels", "cards"
   add_foreign_key "lists", "boards"
 end

@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :update, :destroy]
+  skip_before_action :require_login, only: [:create]
 
   # GET /users
   def index
@@ -49,3 +50,4 @@ class UsersController < ApplicationController
       # params.fetch(:user, {})
       params.require(:user).permit(:username, :email, :first_name, :last_name, :password)
     end
+  end
