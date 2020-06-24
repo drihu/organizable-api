@@ -1,5 +1,6 @@
 class BoardsController < ApplicationController
   before_action :set_board, only: [:show, :update, :destroy]
+  COLORS = ["green", "yellow", "orange", "red", "purple", "blue"]
 
   # GET /boards
   def index
@@ -13,11 +14,13 @@ class BoardsController < ApplicationController
     render json: @board
   end
 
+  colors = {}
+
   # POST /boards
   def create
     @board = Board.new(board_params)
-
     if @board.save
+      COLORS.each {|color| @board.labels.create(name:"", color: color) }
       render json: @board, status: :created
     else
       render json: @board.errors, status: :unprocessable_entity
