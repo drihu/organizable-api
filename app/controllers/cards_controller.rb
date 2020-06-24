@@ -41,7 +41,7 @@ class CardsController < ApplicationController
     def authorize_user
       list = List.find(params[:list_id])
       list_owner = list.board.user
-      unless (current_user == card_owner)
+      unless (current_user == list_owner)
         errors = { errors: { message: 'Access denied' } }
         render json: errors, status: :unauthorized
       end

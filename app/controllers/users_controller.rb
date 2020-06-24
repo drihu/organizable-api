@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  before_action :authorize_user, except: [:create]
   before_action :set_user, only: [:show, :update, :destroy]
   skip_before_action :require_login, only: [:create]
 
@@ -30,10 +31,18 @@ class UsersController < ApplicationController
 
   private
     def set_user
-      @user = current_user
+      @user = User.find(params[:id])
     end
     
     def user_params
       params.require(:user).permit(:username, :email, :first_name, :last_name, :password)
+    end
+
+    def authorize_user
+      user = User.find(params[:id])
+      unless (current_user == user)
+        errors = { errors: { message: 'Access denied' } }
+        render json: errors, status: :unauthorized
+      end
     end
   end

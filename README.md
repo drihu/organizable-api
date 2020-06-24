@@ -23,7 +23,6 @@ Manage users:
 - POST /users
 - GET /users/:id
 - PATCH /users/:id
-- PUT /users/:id
 - DELETE /users/:id
 
 Manage authentication:
@@ -44,14 +43,12 @@ Manage lists:
 
 - POST /boards/:board_id/lists
 - PATCH /boards/:board_id/lists/:id
-- PUT /boards/:board_id/lists/:id
 - DELETE /boards/:board_id/lists/:id
 
 Manage labels:
 
 - POST /boards/:board_id/labels
 - PATCH /boards/:board_id/labels/:id
-- PUT /boards/:board_id/labels/:id
 - DELETE /boards/:board_id/labels/:id
 
 Manage cards:
@@ -59,21 +56,18 @@ Manage cards:
 - POST /lists/:list_id/cards
 - GET /lists/:list_id/cards/:id \* This endpoint return additional data about checklist and check_items
 - PATCH /lists/:list_id/cards/:id
-- PUT /lists/:list_id/cards/:id
 - DELETE /lists/:list_id/cards/:id
 
 Manage checklists:
 
 - POST /cards/:card_id/checklists
 - PATCH /cards/:card_id/checklists/:id
-- PUT /cards/:card_id/checklists/:id
 - DELETE /cards/:card_id/checklists/:id
 
 Manage check items:
 
 - POST /checklists/:checklist_id/check_items
 - PATCH /checklists/:checklist_id/check_items/:id
-- PUT /checklists/:checklist_id/check_items/:id
 - DELETE /checklists/:checklist_id/check_items/:id
 
 Manage Card-Label relationship:
@@ -93,11 +87,16 @@ This API uses HTTP Authentication Token. Make a POST request to `/login` with th
 }
 ```
 
-Since the username and password are valid, the server will return the authorization token:
+Since the username and password are valid, the server will return the user information with the authorization token:
 
 ```json
 {
-  "token": "bkzrchZ9GhguMygevZ4n1oHm"
+  "id": 1,
+  "username": "codeable",
+  "email": "codeable@mail.com",
+  "firstName": "User",
+  "lastName": "Test",
+  "token": "BNZ6hTF2xDya9AqUuvnu9x7i"
 }
 ```
 
@@ -106,10 +105,10 @@ This token should be included on the `headers` for almost all the other endpoint
 To include the token on your headers, add a `key`-`value` pair in this way:
 
 - `key`: Authorization
-- `value`: Token token="`bkzrchZ9GhguMygevZ4n1oHm`"
+- `value`: Token token="`BNZ6hTF2xDya9AqUuvnu9x7i`"
 
 Example with Insomnia:
 
-![](https://p-vvf5mjm.t2.n0.cdn.getcloudapp.com/items/12uN4kAm/Image%202020-06-24%20at%209.47.35%20AM.png?v=9d988d1fea50cb65e588bea5a9d365da)
+![](https://p-vvf5mjm.t2.n0.cdn.getcloudapp.com/items/2Nu5qnAO/Image%202020-06-24%20at%201.41.57%20PM.png?v=7c308ec3e6262ac6593faff230c2f67e)
 
 You can include headers using `fetch`, check the documentation 😎

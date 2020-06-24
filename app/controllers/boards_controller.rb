@@ -1,5 +1,5 @@
 class BoardsController < ApplicationController
-  before_action :authorize_user, except: [:index]
+  before_action :authorize_user, except: [:index, :create]
   before_action :set_board, only: [:show, :update, :destroy]
   COLORS = ["green", "yellow", "orange", "red", "purple", "blue"]
 

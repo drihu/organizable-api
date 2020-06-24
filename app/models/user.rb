@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
   has_secure_token
-  has_many :boards
+  has_many :boards, dependent: :destroy
   has_many :lists, through: :boards
 
   def invalidate_token
